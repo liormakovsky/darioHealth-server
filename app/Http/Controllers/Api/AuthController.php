@@ -8,6 +8,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use App\Models\User;
+use Carbon\Carbon;
 
 class AuthController extends BaseController
 {
@@ -15,9 +16,9 @@ class AuthController extends BaseController
     {
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
             $request->session()->regenerate();
-            $authUser = Auth::user(); 
+            $authUser = Auth::user(); ;
             $success['token'] =  $authUser->createToken($authUser->email.'_Token')->plainTextToken; 
-            $success['name'] = $authUser->name;
+            $success['usr_name'] = $authUser->usr_name;
             $success['email'] = $authUser->email;
   
             return $this->sendResponse($success, 'User signed in');
@@ -31,7 +32,7 @@ class AuthController extends BaseController
     {
    
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'usr_name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required',
         ]);
@@ -43,6 +44,7 @@ class AuthController extends BaseController
         $input = $request->all();
 
         $input['password'] = bcrypt($input['password']);
+        $input['usr_created'] = Carbon::now();
 
         $user = User::create($input);
 
@@ -55,7 +57,7 @@ class AuthController extends BaseController
         if(Auth::attempt(['email' => $user->email, 'password' => $request->password])){ 
         $request->session()->regenerate();
 
-        $success['name']= $user->name;
+        $success['usr_name']= $user->usr_name;
         $success['email'] = $user->email;
         $success['token'] =  $user->createToken($user->email.'_Token')->plainTextToken;
  
@@ -70,7 +72,7 @@ class AuthController extends BaseController
     {
         
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
+            'usr_name' => 'required',
             'email' => 'required|email'
         ]);
    
@@ -80,7 +82,7 @@ class AuthController extends BaseController
 
         $input = $request->all();
         $updateUser = [
-           'name'=>$input['name'],
+           'usr_name'=>$input['usr_name'],
            'email'=>$input['email'],
         ];
 

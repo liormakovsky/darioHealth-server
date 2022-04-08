@@ -22,6 +22,7 @@ Route::post('auth/register', [AuthController::class, 'signup']);
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('auth/updateUser',[AuthController::class, 'updateUser']);
     Route::post('auth/logout', [AuthController::class, 'logout']); 
-    Route::post('getMessages', [MessageController::class, 'getMessages']);
+    Route::post('getTotalMessages', [MessageController::class, 'getTotalMessages']);
+    Route::post('getInputsValues', [MessageController::class, 'getInputsValues']);
 });
 

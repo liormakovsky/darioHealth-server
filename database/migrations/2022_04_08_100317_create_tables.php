@@ -29,7 +29,7 @@ return new class extends Migration
 
         Schema::create('send_log', function (Blueprint $table) {
             $table->id('log_id');
-            $table->foreignId('usr_id')->references('usr_id')->on('users')->onDelete('cascade');
+            $table->foreignId('usr_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('num_id')->references('num_id')->on('numbers')->onDelete('cascade');
             $table->string('log_messsage')->nullable();
             $table->boolean('log_success');

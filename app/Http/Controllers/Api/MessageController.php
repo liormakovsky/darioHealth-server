@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Validator;
-use App\Models\Cdr;
 use App\Models\User;
 use App\Models\Country;
 use App\Models\Number;
@@ -17,6 +16,18 @@ use Carbon\Carbon;
 
 class MessageController extends BaseController
 {   
+    /**
+     * get countries and users data for the select inputs
+     * return collection
+     */
+    public function getInputsValues(Request $request){
+        $countries = Country::select('cnt_id','cnt_title')->get();
+        $users = User::select('id','usr_name')->get();
+        if($countries->isEmpty() || $users->isEmpty()){
+            return $this->sendError('Please execute the seeders', [],200);
+        }
+        return $this->sendResponse([$countries,$users], '');
+    }
 
     /**
      * getting aggregated by date information from the send_log.
@@ -25,12 +36,12 @@ class MessageController extends BaseController
      * endDate
      * countryId (optional)
      * userId (optional)
-     * return results: amount of successfully sent messages and
+     * return collection results: amount of successfully sent messages and
      * amount of failed messages.
      */
-    public function getMessages(Request $request){
+    public function getTotalMessages(Request $request){
         
-        $validator = Validator::make($request->all(), [
+        /*$validator = Validator::make($request->all(), [
             'startDate' => 'required',
             'endDate' => 'required',
             'countryId' => 'sometimes',
@@ -39,8 +50,8 @@ class MessageController extends BaseController
         
         if($validator->fails()){
             return $this->sendError('Validation Error', $validator->errors(),403);       
-        }
-        
+        }*/
+        $totals = [];
         $startDate = '2022-04-01';
         $endDate = Carbon::today();
         $countryId = '';
@@ -67,7 +78,7 @@ class MessageController extends BaseController
         SUM(CASE WHEN s.log_success = 1 THEN 1 ELSE 0 END) AS total_success,
         SUM(CASE WHEN s.log_success = 0 THEN 1 ELSE 0 END) AS total_failed')
         ->join('numbers as n','n.num_id','s.num_id')
-        ->join('users as u', 'u.usr_id', 's.usr_id')
+        ->join('users as u', 'u.id', 's.usr_id')
         ->join('countries as c', 'c.cnt_id', 's.num_id')
         ->where('s.log_created' ,'>=',$startDate)
         ->where('s.log_created','<=',$endDate)
@@ -75,7 +86,7 @@ class MessageController extends BaseController
             return $query->where('c.cnt_id', $countryId);
         })
         ->when($userId, function ($query, $userId) {
-            return $query->where('u.usr_id', $userId);
+            return $query->where('u.id', $userId);
         })
         ->groupBy('s.log_created')
         ->get();
