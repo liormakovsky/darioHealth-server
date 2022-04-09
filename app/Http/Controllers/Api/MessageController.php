@@ -68,7 +68,7 @@ class MessageController extends BaseController
         }
 
         if(!empty($request->countryId)){
-            $countryId = $request->$countryId;
+            $countryId = $request->countryId;
         }
 
         if(!empty($request->userId)){
@@ -92,7 +92,7 @@ class MessageController extends BaseController
         })
         ->groupBy('s.log_created')
         ->get();
-        return $this->sendResponse($totals, '');
+        return $this->sendResponse($totals, ["country"=>$countryId,"user"=>$userId]);
     }                  
 }
 
