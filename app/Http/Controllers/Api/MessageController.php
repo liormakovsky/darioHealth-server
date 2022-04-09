@@ -51,6 +51,7 @@ class MessageController extends BaseController
         if($validator->fails()){
             return $this->sendError('Validation Error', $validator->errors(),403);       
         }
+
         $totals = [];
         $startDate = '2022-04-01';
         $endDate = Carbon::today();
@@ -58,11 +59,12 @@ class MessageController extends BaseController
         $userId = '';
 
         if(!empty($request->startDate)){
-            $startDate = $request->startDate;
+            $startDate = Carbon::parse($request->startDate);
+            
         }
 
         if(!empty($request->endDate)){
-            $endDate = $request->endDate;
+            $endDate = Carbon::parse($request->endDate);
         }
 
         if(!empty($request->countryId)){
