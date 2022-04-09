@@ -59,14 +59,13 @@ class MessageController extends BaseController
         $userId = '';
 
         if(!empty($request->startDate)){
-            $startDate = Carbon::parse($request->startDate);
-            
+            $startDate = Carbon::createFromFormat('m/d/Y', $request->startDate)->format('Y-m-d');
         }
 
         if(!empty($request->endDate)){
-            $endDate = Carbon::parse($request->endDate);
+            $endDate = Carbon::createFromFormat('m/d/Y', $request->endDate)->format('Y-m-d');
         }
-
+        
         if(!empty($request->countryId)){
             $countryId = $request->countryId;
         }
@@ -92,7 +91,7 @@ class MessageController extends BaseController
         })
         ->groupBy('s.log_created')
         ->get();
-        return $this->sendResponse($totals, ["country"=>$countryId,"user"=>$userId]);
+        return $this->sendResponse($totals, []);
     }                  
 }
 
