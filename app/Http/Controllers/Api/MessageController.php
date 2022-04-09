@@ -26,7 +26,7 @@ class MessageController extends BaseController
         if($countries->isEmpty() || $users->isEmpty()){
             return $this->sendError('Please execute the seeders', [],200);
         }
-        return $this->sendResponse([$countries,$users], '');
+        return $this->sendResponse(["countries"=>$countries,"users"=>$users], '');
     }
 
     /**
@@ -41,7 +41,7 @@ class MessageController extends BaseController
      */
     public function getTotalMessages(Request $request){
         
-        /*$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'startDate' => 'required',
             'endDate' => 'required',
             'countryId' => 'sometimes',
@@ -50,7 +50,7 @@ class MessageController extends BaseController
         
         if($validator->fails()){
             return $this->sendError('Validation Error', $validator->errors(),403);       
-        }*/
+        }
         $totals = [];
         $startDate = '2022-04-01';
         $endDate = Carbon::today();
