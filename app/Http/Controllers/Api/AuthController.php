@@ -17,7 +17,6 @@ class AuthController extends BaseController
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
             $request->session()->regenerate();
             $authUser = Auth::user(); ;
-            $success['token'] =  $authUser->createToken($authUser->email.'_Token')->plainTextToken; 
             $success['usr_name'] = $authUser->usr_name;
             $success['email'] = $authUser->email;
   
@@ -59,7 +58,6 @@ class AuthController extends BaseController
 
         $success['usr_name']= $user->usr_name;
         $success['email'] = $user->email;
-        $success['token'] =  $user->createToken($user->email.'_Token')->plainTextToken;
  
 
         return $this->sendResponse($success, 'User created successfully.');
